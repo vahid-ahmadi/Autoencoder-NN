@@ -172,16 +172,16 @@ class CVAE(BaseLatentModeModuleClass):
             )
         
         ##
- 	  	  if cond_dim > 0:
-			    if use_embedding_for_cond:
-			  	  self.cond_emb = torch.nn.Embedding(num_conditional_labels, cond_dim)
-			    else:  # use one hot encoding
-				    self.cond_emb = None
-				    cond_dim = num_conditional_labels
-		    self.cond_input = cond_input
-		    self.use_embedding_for_cond = use_embedding_for_cond
-		    self.num_conditional_labels = num_conditional_labels
-		    cond_input_dim = cond_dim if cond_input else 0
+        if cond_dim > 0:
+	     if use_embedding_for_cond:
+		 self.cond_emb = torch.nn.Embedding(num_conditional_labels, cond_dim)
+	     else:  # use one hot encoding
+		  self.cond_emb = None
+		  cond_dim = num_conditional_labels
+	self.cond_input = cond_input
+	self.use_embedding_for_cond = use_embedding_for_cond
+	self.num_conditional_labels = num_conditional_labels
+	cond_input_dim = cond_dim if cond_input else 0
 
 
         use_batch_norm_encoder = use_batch_norm == "encoder" or use_batch_norm == "both"
@@ -327,7 +327,7 @@ class CVAE(BaseLatentModeModuleClass):
 
         ##
         if conditional is not None:
-			      cond_emb_vec = self.cond_emb(conditional) if self.use_embedding_for_cond else torch.nn.functional.one_hot(conditional, self.num_conditional_labels)
+	    ond_emb_vec = self.cond_emb(conditional) if self.use_embedding_for_cond else torch.nn.functional.one_hot(conditional, self.num_conditional_labels)
 
         if cont_covs is not None and self.encode_covariates:
             encoder_input = torch.cat((x_, cont_covs), dim=-1)
@@ -335,7 +335,7 @@ class CVAE(BaseLatentModeModuleClass):
             encoder_input = x_
         ##
         if conditional is not None and self.cond_input:
-			      encoder_input = torch.cat([encoder_input, cond_emb_vec], dim=1)
+            encoder_input = torch.cat([encoder_input, cond_emb_vec], dim=1)
          
         if cat_covs is not None and self.encode_covariates:
             categorical_input = torch.split(cat_covs, 1, dim=1)
@@ -392,7 +392,7 @@ class CVAE(BaseLatentModeModuleClass):
         # Likelihood distribution
         ##
         if conditional is not None:
-			      cond_emb_vec = self.cond_emb(conditional) if self.use_embedding_for_cond else torch.nn.functional.one_hot(conditional, self.num_conditional_labels)
+	    cond_emb_vec = self.cond_emb(conditional) if self.use_embedding_for_cond else torch.nn.functional.one_hot(conditional, self.num_conditional_labels)
         if cont_covs is None:
             decoder_input = z
         elif z.dim() != cont_covs.dim():
@@ -404,7 +404,7 @@ class CVAE(BaseLatentModeModuleClass):
         
         ##
         if conditional is not None:
-				    decoder_input = torch.cat([decoder_input, cond_emb_vec], dim=1)
+	    decoder_input = torch.cat([decoder_input, cond_emb_vec], dim=1)
 
 
         if cat_covs is not None:
